@@ -3,15 +3,13 @@ package wingorithm.ticketing.vibecoding.application.booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import wingorithm.ticketing.vibecoding.application.exception.PaymentFailedException;
 import wingorithm.ticketing.vibecoding.domain.booking.Booking;
 import wingorithm.ticketing.vibecoding.domain.booking.BookingStatus;
@@ -27,7 +25,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,10 +36,17 @@ class PaymentServiceTest {
     private BookingRepository bookingRepository;
     @Mock
     private EventRepository eventRepository;
+    
     @Mock
-    private RestTemplateBuilder restTemplateBuilder;
+    private RestClient.Builder restClientBuilder;
     @Mock
-    private RestTemplate restTemplate;
+    private RestClient restClient;
+    @Mock
+    private RestClient.RequestBodyUriSpec requestBodyUriSpec;
+    @Mock
+    private RestClient.RequestBodySpec requestBodySpec;
+    @Mock
+    private RestClient.ResponseSpec responseSpec;
 
     private PaymentService paymentService;
 
@@ -50,8 +56,8 @@ class PaymentServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(restTemplateBuilder.build()).thenReturn(restTemplate);
-        paymentService = new PaymentService(bookingRepository, eventRepository, restTemplateBuilder);
+        when(restClientBuilder.build()).thenReturn(restClient);
+        paymentService = new PaymentService(bookingRepository, eventRepository, restClientBuilder);
         ReflectionTestUtils.setField(paymentService, "paymentGatewayUrl", "http://localhost:9001/api/v1/payment");
 
         bookingId = UUID.randomUUID();
@@ -83,8 +89,13 @@ class PaymentServiceTest {
         successResponse.setReceiptUrl("https://receipt.url");
         
         ResponseEntity<PaymentGatewayResponse> responseEntity = new ResponseEntity<>(successResponse, HttpStatus.OK);
-        when(restTemplate.postForEntity(anyString(), any(PaymentGatewayRequest.class), eq(PaymentGatewayResponse.class)))
-                .thenReturn(responseEntity);
+        
+        // Mock RestClient chain
+        when(restClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.body(any(PaymentGatewayRequest.class))).thenReturn(requestBodySpec);
+        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.toEntity(PaymentGatewayResponse.class)).thenReturn(responseEntity);
 
         // Act
         PaymentGatewayResponse result = paymentService.processPayment(bookingId);
@@ -107,13 +118,18 @@ class PaymentServiceTest {
         HttpClientErrorException mockException = mock(HttpClientErrorException.class);
         PaymentGatewayResponse failedResponse = new PaymentGatewayResponse();
         failedResponse.setStatus("FAILED");
-        PaymentGatewayResponse.ErrorDetail errorDetail = new PaymentGatewayResponse.ErrorDetail();
+        PaymentGatewayResponse.PaymentError errorDetail = new PaymentGatewayResponse.PaymentError();
         errorDetail.setMessage("Insufficient funds");
         failedResponse.setError(errorDetail);
         
         when(mockException.getResponseBodyAs(PaymentGatewayResponse.class)).thenReturn(failedResponse);
-        when(restTemplate.postForEntity(anyString(), any(PaymentGatewayRequest.class), eq(PaymentGatewayResponse.class)))
-                .thenThrow(mockException);
+        
+        // Mock RestClient chain
+        when(restClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.body(any(PaymentGatewayRequest.class))).thenReturn(requestBodySpec);
+        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.toEntity(PaymentGatewayResponse.class)).thenThrow(mockException);
 
         // Act & Assert
         PaymentFailedException exception = assertThrows(PaymentFailedException.class, () -> paymentService.processPayment(bookingId));
