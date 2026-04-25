@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -19,6 +20,9 @@ import wingorithm.ticketing.vibecoding.infrastructure.persistence.booking.Bookin
 import wingorithm.ticketing.vibecoding.infrastructure.persistence.event.EventRepository;
 import wingorithm.ticketing.vibecoding.presentation.dto.PaymentGatewayRequest;
 import wingorithm.ticketing.vibecoding.presentation.dto.PaymentGatewayResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -115,14 +119,18 @@ class PaymentServiceTest {
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
         when(eventRepository.findByIdWithLock(event.getId())).thenReturn(Optional.of(event));
 
-        HttpClientErrorException mockException = mock(HttpClientErrorException.class);
         PaymentGatewayResponse failedResponse = new PaymentGatewayResponse();
         failedResponse.setStatus("FAILED");
         PaymentGatewayResponse.PaymentError errorDetail = new PaymentGatewayResponse.PaymentError();
         errorDetail.setMessage("Insufficient funds");
         failedResponse.setError(errorDetail);
-        
-        when(mockException.getResponseBodyAs(PaymentGatewayResponse.class)).thenReturn(failedResponse);
+
+        HttpClientErrorException mockException = new HttpClientErrorException(HttpStatus.BAD_REQUEST) {
+            @Override
+            public <T> T getResponseBodyAs(Class<T> responseType) {
+                return (T) failedResponse;
+            }
+        };
         
         // Mock RestClient chain
         when(restClient.post()).thenReturn(requestBodyUriSpec);

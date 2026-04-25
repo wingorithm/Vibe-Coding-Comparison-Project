@@ -2,13 +2,12 @@ package wingorithm.ticketing.vibecoding.application.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import wingorithm.ticketing.vibecoding.application.exception.InvalidBookingStateException;
 import wingorithm.ticketing.vibecoding.application.exception.PaymentFailedException;
 import wingorithm.ticketing.vibecoding.application.exception.ResourceNotFoundException;
@@ -28,15 +27,15 @@ public class PaymentService {
 
     private final BookingRepository bookingRepository;
     private final EventRepository eventRepository;
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
     
     @Value("${payment.gateway.url:http://localhost:9001/api/v1/payment}")
     private String paymentGatewayUrl;
 
-    public PaymentService(BookingRepository bookingRepository, EventRepository eventRepository, RestTemplateBuilder restTemplateBuilder) {
+    public PaymentService(BookingRepository bookingRepository, EventRepository eventRepository, RestClient.Builder restClientBuilder) {
         this.bookingRepository = bookingRepository;
         this.eventRepository = eventRepository;
-        this.restTemplate = restTemplateBuilder.build();
+        this.restClient = restClientBuilder.build();
     }
 
     @Transactional
@@ -59,8 +58,11 @@ public class PaymentService {
         try {
             // Hit external payment gateway
             log.info("Initiating payment for Booking ID: {}", bookingId);
-            ResponseEntity<PaymentGatewayResponse> responseEntity = restTemplate.postForEntity(
-                    paymentGatewayUrl, paymentRequest, PaymentGatewayResponse.class);
+            ResponseEntity<PaymentGatewayResponse> responseEntity = restClient.post()
+                    .uri(paymentGatewayUrl)
+                    .body(paymentRequest)
+                    .retrieve()
+                    .toEntity(PaymentGatewayResponse.class);
 
             PaymentGatewayResponse response = responseEntity.getBody();
 
@@ -77,13 +79,13 @@ public class PaymentService {
 
         } catch (HttpClientErrorException e) {
             // UAC 2: Handle 400 Bad Request / Failed Payment
+            PaymentGatewayResponse errorResponse = null;
             try {
-                PaymentGatewayResponse errorResponse = e.getResponseBodyAs(PaymentGatewayResponse.class);
-                return handleFailedPayment(booking, errorResponse);
+                errorResponse = e.getResponseBodyAs(PaymentGatewayResponse.class);
             } catch (Exception ex) {
                 log.error("Failed to parse error response from payment gateway", ex);
-                return handleFailedPayment(booking, null);
             }
+            return handleFailedPayment(booking, errorResponse);
         } catch (Exception e) {
             log.error("Critical error communicating with payment gateway", e);
             return handleFailedPayment(booking, null);
