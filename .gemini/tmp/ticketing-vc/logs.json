@@ -1,0 +1,156 @@
+[
+  {
+    "sessionId": "eb888ce4-23a2-4d68-a7b0-d056c0647c5b",
+    "messageId": 0,
+    "type": "user",
+    "message": "/directory show",
+    "timestamp": "2026-04-25T07:42:18.088Z"
+  },
+  {
+    "sessionId": "eb888ce4-23a2-4d68-a7b0-d056c0647c5b",
+    "messageId": 1,
+    "type": "user",
+    "message": "/agents reload",
+    "timestamp": "2026-04-25T07:48:16.996Z"
+  },
+  {
+    "sessionId": "eb888ce4-23a2-4d68-a7b0-d056c0647c5b",
+    "messageId": 2,
+    "type": "user",
+    "message": "/agents list",
+    "timestamp": "2026-04-25T07:48:22.626Z"
+  },
+  {
+    "sessionId": "eb888ce4-23a2-4d68-a7b0-d056c0647c5b",
+    "messageId": 3,
+    "type": "user",
+    "message": "/about",
+    "timestamp": "2026-04-25T07:57:57.226Z"
+  },
+  {
+    "sessionId": "eb888ce4-23a2-4d68-a7b0-d056c0647c5b",
+    "messageId": 4,
+    "type": "user",
+    "message": "/quit",
+    "timestamp": "2026-04-25T07:58:07.901Z"
+  },
+  {
+    "sessionId": "1fb013fb-a007-4968-a1e5-de210461063c",
+    "messageId": 0,
+    "type": "user",
+    "message": "/quit",
+    "timestamp": "2026-04-25T08:23:15.215Z"
+  },
+  {
+    "sessionId": "e435870b-a192-4f84-bd7e-1ec28e9c2f31",
+    "messageId": 0,
+    "type": "user",
+    "message": "/mcp list",
+    "timestamp": "2026-04-25T08:23:36.661Z"
+  },
+  {
+    "sessionId": "e435870b-a192-4f84-bd7e-1ec28e9c2f31",
+    "messageId": 1,
+    "type": "user",
+    "message": "/mcp reload",
+    "timestamp": "2026-04-25T08:23:50.817Z"
+  },
+  {
+    "sessionId": "e435870b-a192-4f84-bd7e-1ec28e9c2f31",
+    "messageId": 2,
+    "type": "user",
+    "message": "/mcp reload",
+    "timestamp": "2026-04-25T08:24:50.737Z"
+  },
+  {
+    "sessionId": "e435870b-a192-4f84-bd7e-1ec28e9c2f31",
+    "messageId": 3,
+    "type": "user",
+    "message": "/mcp reload",
+    "timestamp": "2026-04-25T08:25:53.887Z"
+  },
+  {
+    "sessionId": "e435870b-a192-4f84-bd7e-1ec28e9c2f31",
+    "messageId": 4,
+    "type": "user",
+    "message": "can you connect to postgrest on mcp list",
+    "timestamp": "2026-04-25T08:26:40.087Z"
+  },
+  {
+    "sessionId": "e435870b-a192-4f84-bd7e-1ec28e9c2f31",
+    "messageId": 5,
+    "type": "user",
+    "message": "check yout connection to the postgres that i specify on mcpServers `postgres`",
+    "timestamp": "2026-04-25T08:27:46.958Z"
+  },
+  {
+    "sessionId": "e435870b-a192-4f84-bd7e-1ec28e9c2f31",
+    "messageId": 6,
+    "type": "user",
+    "message": "clear",
+    "timestamp": "2026-04-25T08:32:48.059Z"
+  },
+  {
+    "sessionId": "13fd52ea-f379-47e5-b289-c4e2a82346c9",
+    "messageId": 0,
+    "type": "user",
+    "message": "/extensions reload --all",
+    "timestamp": "2026-04-25T08:39:41.261Z"
+  },
+  {
+    "sessionId": "13fd52ea-f379-47e5-b289-c4e2a82346c9",
+    "messageId": 1,
+    "type": "user",
+    "message": "/extensions list",
+    "timestamp": "2026-04-25T08:39:47.588Z"
+  },
+  {
+    "sessionId": "13fd52ea-f379-47e5-b289-c4e2a82346c9",
+    "messageId": 2,
+    "type": "user",
+    "message": "/quit",
+    "timestamp": "2026-04-25T08:39:54.646Z"
+  },
+  {
+    "sessionId": "0b51218d-54ab-4ac5-9a26-348ac850a5e5",
+    "messageId": 0,
+    "type": "user",
+    "message": "/mcp list",
+    "timestamp": "2026-04-25T08:40:51.585Z"
+  },
+  {
+    "sessionId": "0b51218d-54ab-4ac5-9a26-348ac850a5e5",
+    "messageId": 1,
+    "type": "user",
+    "message": "/mcp reload",
+    "timestamp": "2026-04-25T08:41:19.244Z"
+  },
+  {
+    "sessionId": "0b51218d-54ab-4ac5-9a26-348ac850a5e5",
+    "messageId": 2,
+    "type": "user",
+    "message": "/quit",
+    "timestamp": "2026-04-25T08:41:27.570Z"
+  },
+  {
+    "sessionId": "3494a697-74ae-4441-a15b-0d9c80154b8b",
+    "messageId": 0,
+    "type": "user",
+    "message": "/mcp list",
+    "timestamp": "2026-04-25T08:41:52.735Z"
+  },
+  {
+    "sessionId": "3494a697-74ae-4441-a15b-0d9c80154b8b",
+    "messageId": 1,
+    "type": "user",
+    "message": "test connection to db postgres and check if schema vibecode exist",
+    "timestamp": "2026-04-25T08:42:48.429Z"
+  },
+  {
+    "sessionId": "3494a697-74ae-4441-a15b-0d9c80154b8b",
+    "messageId": 2,
+    "type": "user",
+    "message": "asd",
+    "timestamp": "2026-04-25T08:44:47.498Z"
+  }
+]

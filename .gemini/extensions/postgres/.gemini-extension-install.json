@@ -1,0 +1,5 @@
+{
+  "source": "https://github.com/gemini-cli-extensions/postgres",
+  "type": "github-release",
+  "releaseTag": "0.2.2"
+}
